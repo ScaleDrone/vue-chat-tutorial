@@ -1,9 +1,52 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import Input from './components/Input.vue';
 import Messages from './components/Messages.vue';
+import Input from './components/Input.vue';
 import Members from './components/Members.vue';
 import TypingIndicator from './components/TypingIndicator.vue';
+
+let drone = null
+
+function connectToScaledrone() {
+  drone = new window.Scaledrone('YOUR-CHANNEL-ID', {
+    data: me.value,
+  });
+  drone.on('open', error => {
+    if (error) {
+      return console.error(error);
+    }
+    me.value.id = drone.clientId;
+  });
+
+  const room = drone.subscribe('observable-room');
+
+  room.on('message', message => {
+    const { data, member } = message;
+    if (typeof data === 'object' && typeof data.typing === 'boolean') {
+      const index = members.value.findIndex(m => m.id === member.id);
+      members.value[index].typing = data.typing;
+    } else {
+      messages.value.push(message)
+    }
+  });
+
+  room.on('members', newMembers => {
+    members.value = newMembers;
+  });
+  room.on('member_join', member => {
+    members.value.push(member);
+  });
+  room.on('member_leave', ({ id }) => {
+    const index = members.value.findIndex(m => m.id === id);
+    members.value.splice(index, 1);
+  });
+}
+
+onMounted(() => {
+  if (drone === null) {
+    connectToScaledrone();
+  }
+});
 
 function randomName() {
   const adjectives = [
@@ -40,49 +83,13 @@ function randomColor() {
 const messages = ref([]);
 const members = ref([]);
 const me = ref({
-  "username": randomName(),
-  "color": randomColor(),
+  username: randomName(),
+  color: randomColor(),
 });
-
-let drone = null;
-
-function connectToScaledrone() {
-  drone = new window.Scaledrone('CP97dMHyjwQ5jh5c', {
-    data: me.value,
-  });
-  drone.on('open', error => {
-    if (error) {
-      return console.error(error);
-    }
-    me.value.id = drone.clientId;
-  });
-
-  const room = drone.subscribe('observable-room');
-
-  room.on('message', message => {
-    const { data, member } = message;
-    if (typeof data === 'object' && typeof data.typing === 'boolean') {
-      const index = members.value.findIndex(m => m.id === member.id);
-      members.value[index].typing = data.typing;
-    } else {
-      messages.value.push(message)
-    }
-  });
-  room.on('members', newMembers => {
-    members.value = newMembers;
-  });
-  room.on('member_join', member => {
-    members.value.push(member);
-  });
-  room.on('member_leave', ({ id }) => {
-    const index = members.value.findIndex(m => m.id === id);
-    members.value.splice(index, 1);
-  });
-}
 
 function onSendMessage(message) {
   drone.publish({
-    room: "observable-room",
+    room: 'observable-room',
     message,
   });
 }
@@ -93,10 +100,6 @@ function onChangeTypingState(typing) {
     message: { typing },
   });
 }
-
-onMounted(() => {
-  connectToScaledrone();
-});
 </script>
 
 <template>
@@ -106,8 +109,6 @@ onMounted(() => {
       <Messages :messages="messages" :me="me" />
       <TypingIndicator :members="members.filter(m => m.typing && m.id != me.id)" />
       <Input :onSendMessage="onSendMessage" :onChangeTypingState="onChangeTypingState" />
-      <a class="upsell" href="https://www.scaledrone.com/blog/tutorial-build-a-reactjs-chat-app/">Real-time React chat
-        using Scaledrone. See full tutorial →</a>
     </div>
   </main>
 </template>

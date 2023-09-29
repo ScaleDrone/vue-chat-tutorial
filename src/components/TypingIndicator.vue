@@ -6,12 +6,10 @@ const props = defineProps({
 });
 
 const typingText = computed(() => {
-  const names = props.members.filter((member) => member.isTyping).map((member) => member.name);
-
+  const names = props.members.map((member) => member.clientData.username);
   if (names.length === 0) {
     return '';
   }
-
   if (names.length === 1) {
     return `${names[0]} is typing`;
   }

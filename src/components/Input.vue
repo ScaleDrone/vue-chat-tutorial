@@ -2,21 +2,14 @@
 import { ref, onMounted, defineProps } from 'vue';
 import TypingIndicator from 'typing-indicator';
 
+let typingIndicator = null;
+
 const props = defineProps({
   onSendMessage: Function,
   onChangeTypingState: Function,
 });
 
-let typingIndicator = null;
-
 const text = ref('');
-
-onMounted(() => {
-  if (typingIndicator === null) {
-    typingIndicator = new TypingIndicator();
-    typingIndicator.listen(props.onChangeTypingState);
-  }
-});
 
 function onChange(e) {
   const textValue = e.target.value;
@@ -28,6 +21,13 @@ function onSubmit() {
   props.onSendMessage(text.value);
   text.value = '';
 }
+
+onMounted(() => {
+  if (typingIndicator === null) {
+    typingIndicator = new TypingIndicator();
+    typingIndicator.listen(props.onChangeTypingState);
+  }
+});
 </script>
 
 <template>

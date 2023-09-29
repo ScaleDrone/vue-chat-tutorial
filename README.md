@@ -1,29 +1,12 @@
-# scaledrone-vue
+# Vue.js Chat Tutorial: Building A Realtime Messaging App
 
-This template should help get you started developing with Vue 3 in Vite.
+These are the project files for the [Scaledrone Vue.js chat tutorial](TODO).
 
-## Recommended IDE Setup
+To run this example make sure to replace `YOUR-CHANNEL-ID` in [`App.vue`](TODO).
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## Running The Project
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
+```
 npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
 npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
 ```

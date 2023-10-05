@@ -109,6 +109,7 @@ function onChangeTypingState(typing) {
       <Messages :messages="messages" :me="me" />
       <TypingIndicator :members="members.filter(m => m.typing && m.id != me.id)" />
       <Input :onSendMessage="onSendMessage" :onChangeTypingState="onChangeTypingState" />
+      <a class="upsell" href="https://scaledrone.com/blog/vue-real-time-chat-tutorial">Real-time Vue.js chat using Scaledrone. See full tutorial →</a>
     </div>
   </main>
 </template>
